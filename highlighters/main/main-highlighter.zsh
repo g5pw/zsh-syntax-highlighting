@@ -28,32 +28,6 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-
-# Define default styles.
-: ${ZSH_HIGHLIGHT_STYLES[default]:=none}
-: ${ZSH_HIGHLIGHT_STYLES[unknown-token]:=fg=red,bold}
-: ${ZSH_HIGHLIGHT_STYLES[reserved-word]:=fg=yellow}
-: ${ZSH_HIGHLIGHT_STYLES[alias]:=fg=green}
-: ${ZSH_HIGHLIGHT_STYLES[builtin]:=fg=green}
-: ${ZSH_HIGHLIGHT_STYLES[function]:=fg=green}
-: ${ZSH_HIGHLIGHT_STYLES[command]:=fg=green}
-: ${ZSH_HIGHLIGHT_STYLES[precommand]:=fg=green,underline}
-: ${ZSH_HIGHLIGHT_STYLES[commandseparator]:=none}
-: ${ZSH_HIGHLIGHT_STYLES[hashed-command]:=fg=green}
-: ${ZSH_HIGHLIGHT_STYLES[path]:=underline}
-: ${ZSH_HIGHLIGHT_STYLES[path_prefix]:=underline}
-: ${ZSH_HIGHLIGHT_STYLES[path_approx]:=fg=yellow,underline}
-: ${ZSH_HIGHLIGHT_STYLES[globbing]:=fg=blue}
-: ${ZSH_HIGHLIGHT_STYLES[history-expansion]:=fg=blue}
-: ${ZSH_HIGHLIGHT_STYLES[single-hyphen-option]:=none}
-: ${ZSH_HIGHLIGHT_STYLES[double-hyphen-option]:=none}
-: ${ZSH_HIGHLIGHT_STYLES[back-quoted-argument]:=none}
-: ${ZSH_HIGHLIGHT_STYLES[single-quoted-argument]:=fg=yellow}
-: ${ZSH_HIGHLIGHT_STYLES[double-quoted-argument]:=fg=yellow}
-: ${ZSH_HIGHLIGHT_STYLES[dollar-double-quoted-argument]:=fg=cyan}
-: ${ZSH_HIGHLIGHT_STYLES[back-double-quoted-argument]:=fg=cyan}
-: ${ZSH_HIGHLIGHT_STYLES[assign]:=none}
-
 # Whether the highlighter should be called or not.
 _zsh_highlight_main_highlighter_predicate()
 {
@@ -82,6 +56,41 @@ _zsh_highlight_main_highlighter()
     $ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR $ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS
   )
 
+  local highlight_default highlight_unknown_token highlight_reserved_word \
+	highlight_alias highlight_builtin highlight_function highlight_command \
+	highlight_precommand highlight_commandseparator highlight_hashed_command \
+	highlight_path highlight_path_prefix highlight_path_approx \
+	highlight_globbing highlight_history_expansion \
+	highlight_single_hyphen_option highlight_double_hyphen_option \
+	highlight_back_quoted_argument highlight_single_quoted_argument \
+	highlight_double_quoted_argument highlight_dollar_double_quoted_argument \
+	highlight_back_double_quoted_argument highlight_assign
+
+  # Define default styles.
+  zstyle -s ':zsh-syntax-highlighting:main:' default                       highlight_default                       || highlight_default='none'
+  zstyle -s ':zsh-syntax-highlighting:main:' unknown-token                 highlight_unknown_token                 || highlight_unknown_token='fg=red,bold'
+  zstyle -s ':zsh-syntax-highlighting:main:' reserved-word                 highlight_reserved_word                 || highlight_reserved_word='fg=yellow'
+  zstyle -s ':zsh-syntax-highlighting:main:' alias                         highlight_alias                         || highlight_alias='fg=green'
+  zstyle -s ':zsh-syntax-highlighting:main:' builtin                       highlight_builtin                       || highlight_builtin='fg=green'
+  zstyle -s ':zsh-syntax-highlighting:main:' function                      highlight_function                      || highlight_function='fg=green'
+  zstyle -s ':zsh-syntax-highlighting:main:' command                       highlight_command                       || highlight_command='fg=green'
+  zstyle -s ':zsh-syntax-highlighting:main:' precommand                    highlight_precommand                    || highlight_precommand='fg=green,underline'
+  zstyle -s ':zsh-syntax-highlighting:main:' commandseparator              highlight_commandseparator              || highlight_commandseparator='none'
+  zstyle -s ':zsh-syntax-highlighting:main:' hashed-command                highlight_hashed_command                || highlight_hashed_command='fg=green'
+  zstyle -s ':zsh-syntax-highlighting:main:' path                          highlight_path                          || highlight_path='underline'
+  zstyle -s ':zsh-syntax-highlighting:main:' path_prefix                   highlight_path_prefix                   || highlight_path_prefix='underline'
+  zstyle -s ':zsh-syntax-highlighting:main:' path_approx                   highlight_path_approx                   || highlight_path_approx='fg=yellow,underline'
+  zstyle -s ':zsh-syntax-highlighting:main:' globbing                      highlight_globbing                      || highlight_globbing='fg=blue'
+  zstyle -s ':zsh-syntax-highlighting:main:' history-expansion             highlight_history_expansion             || highlight_history_expansion='fg=blue'
+  zstyle -s ':zsh-syntax-highlighting:main:' single-hyphen-option          highlight_single_hyphen_option          || highlight_single_hyphen_option='none'
+  zstyle -s ':zsh-syntax-highlighting:main:' double-hyphen-option          highlight_double_hyphen_option          || highlight_double_hyphen_option='none'
+  zstyle -s ':zsh-syntax-highlighting:main:' back-quoted-argument          highlight_back_quoted_argument          || highlight_back_quoted_argument='none'
+  zstyle -s ':zsh-syntax-highlighting:main:' single-quoted-argument        highlight_single_quoted_argument        || highlight_single_quoted_argument='fg=yellow'
+  zstyle -s ':zsh-syntax-highlighting:main:' double-quoted-argument        highlight_double_quoted_argument        || highlight_double_quoted_argument='fg=yellow'
+  zstyle -s ':zsh-syntax-highlighting:main:' dollar-double-quoted-argument highlight_dollar_double_quoted_argument || highlight_dollar_double_quoted_argument='fg=cyan'
+  zstyle -s ':zsh-syntax-highlighting:main:' back-double-quoted-argument   highlight_back_double_quoted_argument   || highlight_back_double_quoted_argument='fg=cyan'
+  zstyle -s ':zsh-syntax-highlighting:main:' assign                        highlight_assign                        || highlight_assign='none'
+
   for arg in ${(z)BUFFER}; do
     local substr_color=0
     local style_override=""
@@ -107,61 +116,61 @@ _zsh_highlight_main_highlighter()
     if $new_expression; then
       new_expression=false
      if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$arg"} ]]; then
-      style=$ZSH_HIGHLIGHT_STYLES[precommand]
+      style=$highlight_precommand
      elif [[ "$arg" = "sudo" ]]; then
-      style=$ZSH_HIGHLIGHT_STYLES[precommand]
+      style=$highlight_precommand
       sudo=true
      else
       res=$(LC_ALL=C builtin type -w $arg 2>/dev/null)
       case $res in
-        *': reserved')  style=$ZSH_HIGHLIGHT_STYLES[reserved-word];;
-        *': alias')     style=$ZSH_HIGHLIGHT_STYLES[alias]
+        *': reserved')  style=$highlight_reserved_word;;
+        *': alias')     style=$highlight_alias
                         local aliased_command="${"$(alias -- $arg)"#*=}"
                         [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_FOLLOWED_BY_COMMANDS:#"$aliased_command"} && -z ${(M)ZSH_HIGHLIGHT_TOKENS_FOLLOWED_BY_COMMANDS:#"$arg"} ]] && ZSH_HIGHLIGHT_TOKENS_FOLLOWED_BY_COMMANDS+=($arg)
                         ;;
-        *': builtin')   style=$ZSH_HIGHLIGHT_STYLES[builtin];;
-        *': function')  style=$ZSH_HIGHLIGHT_STYLES[function];;
-        *': command')   style=$ZSH_HIGHLIGHT_STYLES[command];;
-        *': hashed')    style=$ZSH_HIGHLIGHT_STYLES[hashed-command];;
+        *': builtin')   style=$highlight_builtin;;
+        *': function')  style=$highlight_function;;
+        *': command')   style=$highlight_command;;
+        *': hashed')    style=$highlight_hashed_command;;
         *)              if _zsh_highlight_main_highlighter_check_assign; then
-                          style=$ZSH_HIGHLIGHT_STYLES[assign]
+                          style=$highlight_assign
                           new_expression=true
                         elif _zsh_highlight_main_highlighter_check_path; then
-                          style=$ZSH_HIGHLIGHT_STYLES[path]
+                          style=$highlight_path
                         elif [[ $arg[0,1] == $histchars[0,1] || $arg[0,1] == $histchars[2,2] ]]; then
-                          style=$ZSH_HIGHLIGHT_STYLES[history-expansion]
+                          style=$highlight_history_expansion
                         else
-                          style=$ZSH_HIGHLIGHT_STYLES[unknown-token]
+                          style=$highlight_unknown_token
                         fi
                         ;;
       esac
      fi
     else
       case $arg in
-        '--'*)   style=$ZSH_HIGHLIGHT_STYLES[double-hyphen-option];;
-        '-'*)    style=$ZSH_HIGHLIGHT_STYLES[single-hyphen-option];;
-        "'"*"'") style=$ZSH_HIGHLIGHT_STYLES[single-quoted-argument];;
-        '"'*'"') style=$ZSH_HIGHLIGHT_STYLES[double-quoted-argument]
+        '--'*)   style=$highlight_double_hyphen_option;;
+        '-'*)    style=$highlight_single_hyphen_option;;
+        "'"*"'") style=$highlight_single_quoted_argument;;
+        '"'*'"') style=$highlight_double_quoted_argument
                  region_highlight+=("$start_pos $end_pos $style")
                  _zsh_highlight_main_highlighter_highlight_string
                  substr_color=1
                  ;;
-        '`'*'`') style=$ZSH_HIGHLIGHT_STYLES[back-quoted-argument];;
-        *"*"*)   $highlight_glob && style=$ZSH_HIGHLIGHT_STYLES[globbing] || style=$ZSH_HIGHLIGHT_STYLES[default];;
+        '`'*'`') style=$highlight_back_quoted_argument;;
+        *"*"*)   $highlight_glob && style=$highlight_globbing || style=$highlight_default;;
         *)       if _zsh_highlight_main_highlighter_check_path; then
-                   style=$ZSH_HIGHLIGHT_STYLES[path]
-                 elif [[ $arg[0,1] = $histchars[0,1] ]]; then
-                   style=$ZSH_HIGHLIGHT_STYLES[history-expansion]
+                   style=$highlight_path
+                 elif [[ $arg[1] == $histchars[1] || $arg[1] == $histchars[2] ]]; then
+                   style=$highlight_history_expansion
                  elif [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
-                   style=$ZSH_HIGHLIGHT_STYLES[commandseparator]
+                   style=$highlight_commandseparator
                  else
-                   style=$ZSH_HIGHLIGHT_STYLES[default]
+                   style=$highlight_default
                  fi
                  ;;
       esac
     fi
     # if a style_override was set (eg in _zsh_highlight_main_highlighter_check_path), use it
-    [[ -n $style_override ]] && style=$ZSH_HIGHLIGHT_STYLES[$style_override]
+    [[ -n $style_override ]] && style=$highlight-$style_override
     [[ $substr_color = 0 ]] && region_highlight+=("$start_pos $end_pos $style")
     [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_FOLLOWED_BY_COMMANDS:#"$arg"} ]] && new_expression=true
     start_pos=$end_pos
@@ -210,10 +219,10 @@ _zsh_highlight_main_highlighter_highlight_string()
     (( j = i + start_pos - 1 ))
     (( k = j + 1 ))
     case "$arg[$i]" in
-      '$' ) style=$ZSH_HIGHLIGHT_STYLES[dollar-double-quoted-argument]
+      '$' ) style=$highlight_dollar_double_quoted_argument
             (( varflag = 1))
             ;;
-      "\\") style=$ZSH_HIGHLIGHT_STYLES[back-double-quoted-argument]
+      "\\") style=$highlight_back_double_quoted_argument
             for (( c = i + 1 ; c < end_pos - start_pos ; c += 1 )); do
               [[ "$arg[$c]" != ([0-9,xX,a-f,A-F]) ]] && break
             done

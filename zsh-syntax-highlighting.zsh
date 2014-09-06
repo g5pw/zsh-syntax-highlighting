@@ -33,8 +33,9 @@
 # Core highlighting update system
 # -------------------------------------------------------------------------------------------------
 
-# Array declaring active highlighters names.
-typeset -ga ZSH_HIGHLIGHT_HIGHLIGHTERS
+typeset -a ZSH_HIGHLIGHT_HIGHLIGHTERS
+
+zstyle -a ':zsh-syntax-highlighting:*' enabled ZSH_HIGHLIGHT_HIGHLIGHTERS
 
 # Update ZLE buffer syntax highlighting.
 #
